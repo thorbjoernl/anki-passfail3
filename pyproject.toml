@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "passfail3"
+version = "0.1.0"
+description = "The Anki Pass/Fail addon, expanded with automatic easy/good/hard grading."
+authors = ["thorbjoernl <51087536+thorbjoernl@users.noreply.github.com>"]
+license = "GPL3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
