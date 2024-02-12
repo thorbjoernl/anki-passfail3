@@ -12,6 +12,9 @@
 # Regards to Dmitry Mikheev for writing the original add-on this was
 # derived from, and the Anki team.
 
+import logging
+import statistics
+
 try:
     from typing import Literal, Callable
 except ImportError:
@@ -30,7 +33,8 @@ except ImportError:
 
 
 from anki.hooks import wrap
-
+from aqt import mw
+from aqt.utils import showInfo
 from aqt.reviewer import Reviewer
 from anki.cards import Card
 
@@ -61,10 +65,33 @@ def pf2_hook_remap_answer_ease(
     card,  # type: Card
 ):  # type: (...) -> tuple[bool, Literal[1, 2, 3, 4]]
     (cont, ease) = ease_tuple
+    # We do not want to modify again gradings.
     if ease == 1:
         return ease_tuple
-    else:
-        return (cont, reviewer._defaultEase())
+
+    review_history = mw.col.db.execute("select * from revlog where cid = ?", card.id)
+    logging.debug(f"Reps: {card.reps}")
+    logging.debug(f"History: {review_history}")
+
+    if (
+        len([x for x in review_history if x[3] != 1]) < 5
+    ):  # Count revlog entries with a passing grade.
+        # Too few data points to meaningfully set ease based on mean/stddev.
+        return (cont, 3)  # Good
+
+    # Calculate the mean and stdev of time spent on reviews, counting only
+    # passing grades.
+    mean_time = statistics.mean([x[7] for x in review_history if x[3] != 1])
+    stdev_time = statistics.stdev([x[7] for x in review_history if x[3] != 1])
+    logging.debug(f"cid{card.id} - {int(mean_time)}±{int(stdev_time)}")
+    logging.debug(f"Time taken: {card.time_taken()}")
+
+    if card.time_taken() <= mean_time - stdev_time:
+        return (cont, 4)  # Easy
+    elif card.time_taken() >= mean_time + stdev_time:
+        return (cont, 2)  # Hard
+
+    return (cont, 3)  # Good
 
 
 # Shims for old versions of anki
@@ -108,6 +135,7 @@ def pf2_fix_pass_title(
 
 # Init
 def init():
+    logging.basicConfig(filename="passfail3.log", encoding="utf-8", level=logging.DEBUG)
     version = point_version()
 
     # Answer button list
