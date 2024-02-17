@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-apkg:
+    runs-on: ubuntu-latest
+
+    permissions: write-all
+    
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - run: passfail3.ankiaddon __init__.py passfail2.py 
+
+      - run: gh release create "${{ github.ref }}" "passfail3.ankiaddon.apkg"
