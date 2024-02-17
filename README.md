@@ -13,3 +13,6 @@ values.
 
 ## Original Readme
 Please also see the original readme for additional details: `README.org`
+
+## Changelog
+- **v0.0.5:** Initial implementation of changed grading.
