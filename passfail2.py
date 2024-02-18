@@ -69,6 +69,14 @@ def pf2_hook_remap_answer_ease(
     if ease == 1:
         return ease_tuple
 
+    if ((mode == "blacklist") and (card.did in decks)) or (
+        (mode == "whitelist") and not (card.did in decks)
+    ):
+        logging.info(
+            f"{card.cid} excluded from time-based grading due to {mode} settings. Graded good."
+        )
+        return (cont, 3)
+
     review_history = mw.col.db.execute("select * from revlog where cid = ?", card.id)
     logging.debug(f"Reps: {card.reps}")
     logging.debug(f"History: {review_history}")
@@ -135,7 +143,25 @@ def pf2_fix_pass_title(
 
 # Init
 def init():
-    logging.basicConfig(filename="passfail3.log", encoding="utf-8", level=logging.DEBUG)
+    logging.basicConfig(
+        filename=os.path.join(mw.addonManager.addonsFolder(), "passfail3.log"),
+        encoding="utf-8",
+        level=logging.DEBUG,
+    )
+
+    config = mw.addonManager.getConfig(__name__)
+
+    mode = config["mode"]
+    if not (mode in ["whitelist", "blacklist"]):
+        logging.error(f"Unexpected mode: {mode}")
+        raise ValueError(
+            f"Unexpected mode, {mode}. Must be one of 'blacklist', 'whitelist'"
+        )
+
+    decks = [mw.col.decks.id_for_name(x) for x in config["decks"]]
+
+    logging.info(f"Operating in {mode} mode, with decks {config['decks']} | {decks}.")
+
     version = point_version()
 
     # Answer button list
