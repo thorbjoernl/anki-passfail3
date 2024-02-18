@@ -12,6 +12,7 @@
 # Regards to Dmitry Mikheev for writing the original add-on this was
 # derived from, and the Anki team.
 
+import os
 import logging
 import statistics
 
