@@ -98,12 +98,12 @@ def pf2_hook_remap_answer_ease(
         (mode == "whitelist") and not (card.did in decks)
     ):
         logging.info(
-            f"{card.cid} excluded from time-based grading due to {mode} settings. Graded good."
+            f"{card.id} excluded from time-based grading due to {mode} settings. Graded good."
         )
         return (cont, 3)  # Good.
 
     logging.info(
-        f"{card.cid} not excluded due to {mode} settings and will be graded based on time."
+        f"{card.id} not excluded due to {mode} settings and will be graded based on time."
     )
 
     # Autograding based on time.
