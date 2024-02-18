@@ -70,6 +70,29 @@ def pf2_hook_remap_answer_ease(
     if ease == 1:
         return ease_tuple
 
+    # Configuration loading and parsing.
+    # TODO: Ugly workaround to deal with mw.col.decks being None in init() and
+    # module level variables not being in scope when hook runs.
+    # How to properly store addon state so hooks can access it?
+    config = mw.addonManager.getConfig(__name__)
+
+    mode = config["mode"]
+    if not (mode in ["whitelist", "blacklist"]):
+        logging.error(f"Unexpected mode: {mode}")
+        raise ValueError(
+            f"Unexpected mode, {mode}. Must be one of 'blacklist', 'whitelist'"
+        )
+
+    logging.info(f"Operating in {mode} mode, with decks {config['decks']}.")
+
+    decks = []
+    for d in config["decks"]:
+        did = mw.col.decks.id_for_name(d)
+        if not did:
+            logging.error(f"Deck {d} was not found.")
+            raise ValueError(f"Deck {d} was not found.")
+        decks.append(did)
+
     # Check for blacklist and whitelist conditions and grade pass if current card is excluded.
     if ((mode == "blacklist") and (card.did in decks)) or (
         (mode == "whitelist") and not (card.did in decks)
@@ -77,7 +100,7 @@ def pf2_hook_remap_answer_ease(
         logging.info(
             f"{card.cid} excluded from time-based grading due to {mode} settings. Graded good."
         )
-        return (cont, 3)
+        return (cont, 3)  # Good.
 
     logging.info(
         f"{card.cid} not excluded due to {mode} settings and will be graded based on time."
@@ -155,19 +178,6 @@ def init():
         encoding="utf-8",
         level=logging.DEBUG,
     )
-
-    config = mw.addonManager.getConfig(__name__)
-
-    mode = config["mode"]
-    if not (mode in ["whitelist", "blacklist"]):
-        logging.error(f"Unexpected mode: {mode}")
-        raise ValueError(
-            f"Unexpected mode, {mode}. Must be one of 'blacklist', 'whitelist'"
-        )
-
-    decks = [mw.col.decks.id_for_name(x) for x in config["decks"]]
-
-    logging.info(f"Operating in {mode} mode, with decks {config['decks']} | {decks}.")
 
     version = point_version()
 
