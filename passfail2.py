@@ -70,6 +70,7 @@ def pf2_hook_remap_answer_ease(
     if ease == 1:
         return ease_tuple
 
+    # Check for blacklist and whitelist conditions and grade pass if current card is excluded.
     if ((mode == "blacklist") and (card.did in decks)) or (
         (mode == "whitelist") and not (card.did in decks)
     ):
@@ -78,6 +79,11 @@ def pf2_hook_remap_answer_ease(
         )
         return (cont, 3)
 
+    logging.info(
+        f"{card.cid} not excluded due to {mode} settings and will be graded based on time."
+    )
+
+    # Autograding based on time.
     review_history = mw.col.db.execute("select * from revlog where cid = ?", card.id)
     logging.debug(f"Reps: {card.reps}")
     logging.debug(f"History: {review_history}")
