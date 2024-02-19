@@ -17,6 +17,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - run: zip passfail3.ankiaddon __init__.py passfail2.py manifest.json LICENCE config.json
+      - run: zip passfail3.ankiaddon __init__.py passfail2.py manifest.json LICENSE config.json
 
       - run: gh release create "${{ github.ref }}" "passfail3.ankiaddon"
