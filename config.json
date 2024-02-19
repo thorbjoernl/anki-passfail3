@@ -1,4 +1,5 @@
 {
+    "debug": false,
     "mode": "whitelist",
     "decks": []
 }

@@ -51,6 +51,14 @@ else:
     from anki.lang import _
 
 
+def show_debug_message(amessage: str):
+    config = mw.addonManager.getConfig(__name__)
+    if config["debug"]:
+        showInfo(amessage)
+
+    logging.debug(amessage)
+
+
 # Hooks
 def pf2_hook_replace_buttons(
     buttons_tuple,  # type: tuple[tuple[int, str], ...]
@@ -89,20 +97,20 @@ def pf2_hook_remap_answer_ease(
     for d in config["decks"]:
         did = mw.col.decks.id_for_name(d)
         if not did:
+            showInfo(f"Deck {d} was not found. Please check configuration.")
             logging.error(f"Deck {d} was not found.")
-            raise ValueError(f"Deck {d} was not found.")
         decks.append(did)
 
     # Check for blacklist and whitelist conditions and grade pass if current card is excluded.
     if ((mode == "blacklist") and (card.did in decks)) or (
         (mode == "whitelist") and not (card.did in decks)
     ):
-        logging.info(
+        show_debug_message(
             f"{card.id} excluded from time-based grading due to {mode} settings. Graded good."
         )
         return (cont, 3)  # Good.
 
-    logging.info(
+    show_debug_message(
         f"{card.id} not excluded due to {mode} settings and will be graded based on time."
     )
 
@@ -115,6 +123,7 @@ def pf2_hook_remap_answer_ease(
         len([x for x in review_history if x[3] != 1]) < 5
     ):  # Count revlog entries with a passing grade.
         # Too few data points to meaningfully set ease based on mean/stddev.
+        show_debug_message("Not enough reviews for time-based grading. Graded GOOD.")
         return (cont, 3)  # Good
 
     # Calculate the mean and stdev of time spent on reviews, counting only
@@ -125,10 +134,13 @@ def pf2_hook_remap_answer_ease(
     logging.debug(f"Time taken: {card.time_taken()}")
 
     if card.time_taken() <= mean_time - stdev_time:
+        show_debug_message("Graded EASY.")
         return (cont, 4)  # Easy
     elif card.time_taken() >= mean_time + stdev_time:
+        show_debug_message("Graded HARD.")
         return (cont, 2)  # Hard
 
+    show_debug_message("Graded GOOD.")
     return (cont, 3)  # Good
 
 
