@@ -115,12 +115,14 @@ def pf2_hook_remap_answer_ease(
     )
 
     # Autograding based on time.
-    review_history = mw.col.db.execute("select * from revlog where cid = ?", card.id)
+    review_history = mw.col.db.execute(
+        "SELECT ease, time FROM revlog where cid = ?", card.id
+    )
     logging.debug(f"Reps: {card.reps}")
     logging.debug(f"History: {review_history}")
 
     if (
-        len([x for x in review_history if x[3] != 1]) < 5
+        len([x for x in review_history if x[0] != 1]) < 5
     ):  # Count revlog entries with a passing grade.
         # Too few data points to meaningfully set ease based on mean/stddev.
         show_debug_message("Not enough reviews for time-based grading. Graded GOOD.")
@@ -128,8 +130,8 @@ def pf2_hook_remap_answer_ease(
 
     # Calculate the mean and stdev of time spent on reviews, counting only
     # passing grades.
-    mean_time = statistics.mean([x[7] for x in review_history if x[3] != 1])
-    stdev_time = statistics.stdev([x[7] for x in review_history if x[3] != 1])
+    mean_time = statistics.mean([x[1] for x in review_history if x[0] != 1])
+    stdev_time = statistics.stdev([x[1] for x in review_history if x[0] != 1])
     logging.debug(f"cid{card.id} - {int(mean_time)}±{int(stdev_time)}")
     logging.debug(f"Time taken: {card.time_taken()}")
 
