@@ -22,6 +22,9 @@ backups of your collection before using these.
 The addon provides two configuration options. To access them go to `Tools->Add-ons`,
 select the add-on and press `Config`.
 
+- **debug** - Either true or false. If true, popupmessages will show up explaining how and why
+cards were graded during review. This information can also be found in the log.
+
 - **mode** - Either 'whitelist' or 'blacklist' which will apply time based grading
 only to the decks listed or all except the decks listed respectively.
 
@@ -33,7 +36,7 @@ and is the default.
 Setting *mode* to `blacklist` and decks to `[]` applies time-based grading to *all* 
 decks. 
 
-## Known Issues
+## Known Issues & Limitations
 These are known issues as currently implemented and may or may not be fixed in the
 future.
 - The pass button may not show the correct new interval during reviews.
