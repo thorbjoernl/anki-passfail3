@@ -188,9 +188,12 @@ def pf2_fix_pass_title(
 # Init
 def init():
     logging.basicConfig(
-        filename=os.path.join(mw.addonManager.addonsFolder(), "passfail3.log"),
+        filename=os.path.join(
+            mw.addonManager.addonsFolder(), "515261413", "passfail3.log"
+        ),
         encoding="utf-8",
         level=logging.DEBUG,
+        format="[%(levelname)s] %(asctime)s: %(message)s",
     )
 
     version = point_version()
