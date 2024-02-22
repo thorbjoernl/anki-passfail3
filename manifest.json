@@ -1,4 +1,5 @@
 {
-    "package": "PassFail3",
-    "name": "Pass/Fail with Automatic Grading"
+    "package": "passfail3",
+    "name": "Pass/Fail with Automatic Grading",
+    "conflicts": ["876946123"]
 }
