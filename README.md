@@ -12,7 +12,7 @@ This will start to apply only after 5 reviews, to have meaningful estimates for 
 values.
 
 ## Releases
-**Todo**: Add link to Anki page.
+The addon can be downloaded on Ankiweb [here](https://ankiweb.net/shared/info/515261413).
 
 The most recent release can be grabbed from the [releases page](https://github.com/thorbjoernl/anki-passfail3/releases).
 Keep in mind that these releases may be experimental and may cause problems. Make
