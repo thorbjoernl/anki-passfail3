@@ -96,7 +96,7 @@ def pf2_hook_remap_answer_ease(
             f"Unexpected mode, {config.config['mode']}. Must be one of 'blacklist', 'whitelist'"
         )
 
-    logging.info(f"Operating in {mode} mode, with decks {config['decks']}.")
+    logging.info(f"Operating in {mode} mode, with decks {config.get_decks_as_names()}.")
 
     decks, invalid_decks = config.get_decks_as_deck_ids()
 
