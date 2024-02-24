@@ -49,5 +49,6 @@ exceptions / errors.
 Please also see the readme of Pass/Fail 2 for additional details: `README.org`
 
 ## Changelog
+- **v0.1.2:** Allow changing button labels.
 - **v0.0.9:** Blacklist and whitelist based on deck. 
 - **v0.0.5:** Initial implementation of changed grading.
