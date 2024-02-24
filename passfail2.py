@@ -50,33 +50,19 @@ elif point_version() >= 36:
 else:
     from anki.lang import _
 
+from .configparser import PassfailConfigParser
+
 
 def show_debug_message(amessage: str):
     """
     Logs a debug message, and shows it as a popup message if
     the debug option is enabled.
     """
-    config = mw.addonManager.getConfig(__name__)
-    if config["debug"]:
+    config = PassfailConfigParser()
+    if config.is_debug_mode():
         showInfo(amessage)
 
     logging.debug(amessage)
-
-
-def canonicalize_mode(mode):
-    """
-    Converts a mode string to one of the canonical
-    versions, blacklist or whitelist.
-
-    Returns None if the string was not recognized.
-    """
-    if mode.lower() in ["blacklist", "exclude"]:
-        return "blacklist"
-
-    if mode.lower() in ["whitelist", "include"]:
-        return "whitelist"
-
-    return None
 
 
 # Hooks
@@ -85,13 +71,10 @@ def pf2_hook_replace_buttons(
     reviewer,  # type: Reviewer
     card,  # type: Card
 ):  # type: (...) -> tuple[tuple[int,str], ...]
-    try:
-        config = mw.addonManager.getConfig(__name__)
+    config = PassfailConfigParser()
 
-        fail_lbl, pass_lbl = tuple(config["button_labels"])
-        return ((1, fail_lbl), (reviewer._defaultEase(), pass_lbl))
-    except:
-        return ((1, "Fail"), (reviewer._defaultEase(), "Pass"))
+    fail_lbl, pass_lbl = config.get_button_labels()
+    return ((1, fail_lbl), (reviewer._defaultEase(), pass_lbl))
 
 
 def pf2_hook_remap_answer_ease(
@@ -104,28 +87,24 @@ def pf2_hook_remap_answer_ease(
     if ease == 1:
         return ease_tuple
 
-    # Configuration loading and parsing.
-    # TODO: Ugly workaround to deal with mw.col.decks being None in init() and
-    # module level variables not being in scope when hook runs.
-    # How to properly store addon state so hooks can access it?
-    config = mw.addonManager.getConfig(__name__)
+    config = PassfailConfigParser()
 
-    mode = canonicalize_mode(config["mode"])
+    mode = config.get_mode()
     if not mode:
-        logging.error(f"Unexpected mode: {config['mode']}")
+        logging.error(f"Unexpected mode: {config.config['mode']}")
         raise ValueError(
-            f"Unexpected mode, {config['mode']}. Must be one of 'blacklist', 'whitelist'"
+            f"Unexpected mode, {config.config['mode']}. Must be one of 'blacklist', 'whitelist'"
         )
 
     logging.info(f"Operating in {mode} mode, with decks {config['decks']}.")
 
-    decks = []
-    for d in config["decks"]:
-        did = mw.col.decks.id_for_name(d)
-        if not did:
-            showInfo(f"Deck {d} was not found. Please check configuration.")
-            logging.error(f"Deck {d} was not found.")
-        decks.append(did)
+    decks, invalid_decks = config.get_decks_as_deck_ids()
+
+    if not invalid_decks:
+        showInfo(
+            f"The following deck names could not be found in your collection: {invalid_decks}."
+        )
+        logging.error(f"Decks, {invalid_decks}, was not found.")
 
     # Check for blacklist and whitelist conditions and grade pass if current card is excluded.
     if ((mode == "blacklist") and (card.did in decks)) or (
