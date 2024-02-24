@@ -100,7 +100,7 @@ def pf2_hook_remap_answer_ease(
 
     decks, invalid_decks = config.get_decks_as_deck_ids()
 
-    if not invalid_decks:
+    if invalid_decks:
         showInfo(
             f"The following deck names could not be found in your collection: {invalid_decks}."
         )
