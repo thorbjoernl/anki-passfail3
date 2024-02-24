@@ -62,6 +62,7 @@ def show_debug_message(amessage: str):
 
     logging.debug(amessage)
 
+
 def canonicalize_mode(mode):
     """
     Converts a mode string to one of the canonical
@@ -76,6 +77,7 @@ def canonicalize_mode(mode):
         return "whitelist"
 
     return None
+
 
 # Hooks
 def pf2_hook_replace_buttons(
