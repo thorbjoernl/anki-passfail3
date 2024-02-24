@@ -65,7 +65,13 @@ def pf2_hook_replace_buttons(
     reviewer,  # type: Reviewer
     card,  # type: Card
 ):  # type: (...) -> tuple[tuple[int,str], ...]
-    return ((1, "Fail"), (reviewer._defaultEase(), "Pass"))
+    try:
+        config = mw.addonManager.getConfig(__name__)
+
+        fail_lbl, pass_lbl = tuple(config["button_labels"])
+        return ((1, fail_lbl), (reviewer._defaultEase(), pass_lbl))
+    except:
+        return ((1, "Fail"), (reviewer._defaultEase(), "Pass"))
 
 
 def pf2_hook_remap_answer_ease(

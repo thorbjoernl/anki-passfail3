@@ -1,5 +1,6 @@
 {
     "debug": false,
     "mode": "whitelist",
-    "decks": []
+    "decks": [],
+    "button_labels": ["Fail", "Pass"]
 }
