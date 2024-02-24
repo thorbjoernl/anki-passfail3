@@ -19,16 +19,8 @@ Keep in mind that these releases may be experimental and may cause problems. Mak
 backups of your collection before using these.
 
 ## Configuration
-The addon provides two configuration options. To access them go to `Tools->Add-ons`,
-select the add-on and press `Config`.
-
-- **debug** - Either true or false. If true, popupmessages will show up explaining how and why
-cards were graded during review. This information can also be found in the log.
-
-- **mode** - Either 'whitelist' or 'blacklist' which will apply time based grading
-only to the decks listed or all except the decks listed respectively.
-
-- **decks** - A list of deck names to which the above option applies.
+The add-on provides some options that can be used to configure it.
+To access them go to `Tools->Add-ons`. These options are documented in `config.md`.
 
 Setting *mode* to `whitelist` and decks to `[]` should be equivalent to Pass/Fail 2
 and is the default.
