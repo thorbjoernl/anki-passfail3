@@ -4,6 +4,6 @@
 
 **decks** (Default: []): A list of deck names. Note that nested decks are not automatically included. Including "Main" does *not* apply to "Main::A"; each subdeck must be listed individually.
 
-**mode** (Default: "whitelist"): Sets how the deck list should be interpreted. If whitelist timebased grading *only* applies to the listed decks. If blacklist timebased grading applies to *all* decks except the listed ones.
+**mode** (Default: "whitelist"): Sets how the deck list should be interpreted. If whitelist timebased grading *only* applies to the listed decks. If blacklist timebased grading applies to *all* decks except the listed ones. "include" and "exclude" are treated as synonyms for "whitelist" and "blacklist", respectively.
 
 

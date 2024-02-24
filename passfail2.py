@@ -52,12 +52,30 @@ else:
 
 
 def show_debug_message(amessage: str):
+    """
+    Logs a debug message, and shows it as a popup message if
+    the debug option is enabled.
+    """
     config = mw.addonManager.getConfig(__name__)
     if config["debug"]:
         showInfo(amessage)
 
     logging.debug(amessage)
 
+def canonicalize_mode(mode):
+    """
+    Converts a mode string to one of the canonical
+    versions, blacklist or whitelist.
+
+    Returns None if the string was not recognized.
+    """
+    if mode.lower() in ["blacklist", "exclude"]:
+        return "blacklist"
+
+    if mode.lower() in ["whitelist", "include"]:
+        return "whitelist"
+
+    return None
 
 # Hooks
 def pf2_hook_replace_buttons(
@@ -90,11 +108,11 @@ def pf2_hook_remap_answer_ease(
     # How to properly store addon state so hooks can access it?
     config = mw.addonManager.getConfig(__name__)
 
-    mode = config["mode"]
-    if not (mode in ["whitelist", "blacklist"]):
-        logging.error(f"Unexpected mode: {mode}")
+    mode = canonicalize_mode(config["mode"])
+    if not mode:
+        logging.error(f"Unexpected mode: {config['mode']}")
         raise ValueError(
-            f"Unexpected mode, {mode}. Must be one of 'blacklist', 'whitelist'"
+            f"Unexpected mode, {config['mode']}. Must be one of 'blacklist', 'whitelist'"
         )
 
     logging.info(f"Operating in {mode} mode, with decks {config['decks']}.")
