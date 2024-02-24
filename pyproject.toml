@@ -5,6 +5,7 @@ description = "The Anki Pass/Fail addon, expanded with automatic easy/good/hard 
 authors = ["thorbjoernl <51087536+thorbjoernl@users.noreply.github.com>"]
 license = "GPL3"
 readme = "README.md"
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.11"
